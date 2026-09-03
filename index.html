@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spanlab // ese 2030</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="alternate icon" href="favicon.svg" />
+
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="grid-bg min-h-full">
+
+  <div class="fixed inset-0 pointer-events-none overflow-hidden opacity-30 z-0">
+    <div class="absolute inset-x-0 h-32 bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent animate-scan"></div>
+  </div>
+
+  <div class="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <header class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3 mb-1">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-blue/30 to-neon-purple/30 border border-neon-blue/40 flex items-center justify-center shadow-glow">
+            <i class="fa-solid fa-vector-square text-neon-cyan text-lg"></i>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">
+            <span class="text-white">spanlab</span>
+            <span class="text-lab-muted font-light"> // ese 2030</span>
+          </h1>
+        </div>
+        <p class="text-sm text-lab-muted ml-[52px] max-w-xl">
+          Four Quadrants: <span class="text-neon-blue">Algebra</span>,
+          <span class="text-neon-orange">Geometry</span>,
+          <span class="text-neon-green">Data</span>, and
+          <span class="text-neon-purple">Dynamics</span>
+        </p>
+      </div>
+      <nav class="flex gap-2">
+        <button id="tab-pivot" class="tab-btn active px-4 py-2 rounded-lg border border-lab-border text-sm font-medium transition-all hover:border-neon-blue/50">
+          <i class="fa-solid fa-bomb mr-2 text-neon-red"></i>Bad Pivot
+        </button>
+        <button id="tab-subspace" class="tab-btn px-4 py-2 rounded-lg border border-lab-border text-sm font-medium transition-all hover:border-neon-blue/50">
+          <i class="fa-solid fa-layer-group mr-2 text-neon-orange"></i>Subspaces
+        </button>
+      </nav>
+    </header>
+
+    <!-- Simulation 1: Bad Pivot -->
+    <section id="sim-pivot" class="sim-panel">
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="card-glow rounded-xl border border-lab-border bg-lab-card/80 backdrop-blur p-5">
+            <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-microchip text-neon-cyan"></i>
+              The Bad Pivot Disaster
+            </h2>
+            <p class="text-xs text-lab-muted mb-4">LU vs. PLU · 3-digit finite precision</p>
+
+            <div class="math-block text-sm bg-black/30 rounded-lg p-4 mb-4 border border-lab-border/60">
+              <div class="text-lab-muted text-xs mb-2 uppercase tracking-wider">Linear System Ax = b</div>
+              <div class="flex items-center gap-3 text-neon-cyan">
+                <span class="text-white">[</span>
+                <span><span id="disp-eps" class="text-neon-orange">0.001</span>&nbsp;&nbsp;1</span>
+                <span class="text-white">]</span>
+                <span class="text-lab-muted">[x₁]</span>
+                <span class="text-white">=</span>
+                <span class="text-white">[1]</span>
+              </div>
+              <div class="flex items-center gap-3 text-neon-cyan ml-4">
+                <span class="text-white">[</span>
+                <span>1&nbsp;&nbsp;1</span>
+                <span class="text-white">]</span>
+                <span class="text-lab-muted">[x₂]</span>
+                <span class="text-white">=</span>
+                <span class="text-white">[2]</span>
+              </div>
+            </div>
+
+            <div class="mb-5">
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-sm font-medium"><i class="fa-solid fa-sliders mr-1 text-neon-blue"></i> ε (pivot)</label>
+                <span id="eps-label" class="font-mono text-sm text-neon-orange stat-value">0.001</span>
+              </div>
+              <input type="range" id="eps-slider" min="0" max="1000" value="500" />
+              <div class="flex justify-between text-[10px] text-lab-muted mt-1 font-mono">
+                <span>0.1</span><span>0.0001</span>
+              </div>
+            </div>
+
+            <div class="flex gap-2 mb-4">
+              <button id="view-both" class="mode-pill active flex-1 py-2 px-3 rounded-lg border border-lab-border text-xs font-medium transition-all">
+                <i class="fa-solid fa-columns mr-1"></i> Compare Both
+              </button>
+              <button id="view-lu" class="mode-pill flex-1 py-2 px-3 rounded-lg border border-lab-border text-xs font-medium transition-all">
+                <i class="fa-solid fa-xmark text-neon-red mr-1"></i> Pure LU
+              </button>
+              <button id="view-plu" class="mode-pill flex-1 py-2 px-3 rounded-lg border border-lab-border text-xs font-medium transition-all">
+                <i class="fa-solid fa-check text-neon-green mr-1"></i> PLU
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-lg bg-neon-red/10 border border-neon-red/30 p-3">
+                <div class="text-[10px] uppercase tracking-wider text-neon-red mb-1">LU Error</div>
+                <div id="lu-error" class="font-mono text-xl font-semibold text-neon-red stat-value">—</div>
+              </div>
+              <div class="rounded-lg bg-neon-green/10 border border-neon-green/30 p-3">
+                <div class="text-[10px] uppercase tracking-wider text-neon-green mb-1">PLU Error</div>
+                <div id="plu-error" class="font-mono text-xl font-semibold text-neon-green stat-value">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-lab-border bg-lab-card/80 backdrop-blur p-5 scanline relative">
+            <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-neon-purple"></i>
+              Step-by-Step Trace
+              <span class="ml-auto text-[10px] text-lab-muted font-mono">round₃(·)</span>
+            </h3>
+            <div id="trace-box" class="space-y-2 text-xs font-mono max-h-[340px] overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="rounded-xl border border-lab-border bg-lab-card/80 backdrop-blur p-4 card-glow">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold"><i class="fa-solid fa-crosshairs mr-2 text-neon-cyan"></i>Solution Space</h3>
+              <div class="flex gap-3 text-[10px] font-mono">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-neon-green shadow-glow-green"></span> True</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-neon-red shadow-glow-red"></span> LU</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-neon-blue"></span> PLU</span>
+              </div>
+            </div>
+            <canvas id="pivot-canvas" class="lab-canvas" height="420"></canvas>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="rounded-lg border border-neon-green/30 bg-neon-green/5 p-3">
+              <div class="text-[10px] text-neon-green uppercase mb-1">True (x₁, x₂)</div>
+              <div id="true-coords" class="font-mono text-sm stat-value">—</div>
+            </div>
+            <div class="rounded-lg border border-neon-red/30 bg-neon-red/5 p-3">
+              <div class="text-[10px] text-neon-red uppercase mb-1">LU (x₁, x₂)</div>
+              <div id="lu-coords" class="font-mono text-sm stat-value">—</div>
+            </div>
+            <div class="rounded-lg border border-neon-blue/30 bg-neon-blue/5 p-3">
+              <div class="text-[10px] text-neon-blue uppercase mb-1">PLU (x₁, x₂)</div>
+              <div id="plu-coords" class="font-mono text-sm stat-value">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Simulation 2: Subspaces -->
+    <section id="sim-subspace" class="sim-panel hidden">
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="rounded-xl border border-lab-border bg-lab-card/80 backdrop-blur p-5 card-glow">
+            <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-shapes text-neon-orange"></i>
+              Subspace: Union vs. Sum
+            </h2>
+            <p class="text-xs text-lab-muted mb-4">Why U ∪ W fails closure but U + W = ℝ²</p>
+
+            <div class="flex gap-2 mb-5">
+              <button id="mode-union" class="mode-pill active flex-1 py-2.5 px-3 rounded-lg border border-lab-border text-xs font-medium transition-all">
+                <i class="fa-solid fa-code-branch mr-1 text-neon-red"></i> U ∪ W (Union)
+              </button>
+              <button id="mode-sum" class="mode-pill flex-1 py-2.5 px-3 rounded-lg border border-lab-border text-xs font-medium transition-all">
+                <i class="fa-solid fa-expand mr-1 text-neon-green"></i> U + W (Sum)
+              </button>
+            </div>
+
+            <div class="space-y-3 mb-4">
+              <div class="flex items-center gap-3 p-3 rounded-lg bg-neon-blue/10 border border-neon-blue/30">
+                <div class="w-8 h-8 rounded-full bg-neon-blue/20 flex items-center justify-center">
+                  <i class="fa-solid fa-u text-neon-blue text-xs"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="text-[10px] uppercase text-neon-blue tracking-wider">u → U = span(u)</div>
+                  <div id="vec-u" class="font-mono text-sm stat-value">(2.0, 0.5)</div>
+                </div>
+                <div class="text-[10px] text-lab-muted">drag handle →</div>
+              </div>
+              <div class="flex items-center gap-3 p-3 rounded-lg bg-neon-orange/10 border border-neon-orange/30">
+                <div class="w-8 h-8 rounded-full bg-neon-orange/20 flex items-center justify-center">
+                  <i class="fa-solid fa-w text-neon-orange text-xs"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="text-[10px] uppercase text-neon-orange tracking-wider">w → W = span(w)</div>
+                  <div id="vec-w" class="font-mono text-sm stat-value">(0.5, 2.0)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 p-3 rounded-lg bg-neon-green/10 border border-neon-green/30">
+                <div class="w-8 h-8 rounded-full bg-neon-green/20 flex items-center justify-center">
+                  <i class="fa-solid fa-plus text-neon-green text-xs"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="text-[10px] uppercase text-neon-green tracking-wider">v = u + w</div>
+                  <div id="vec-sum" class="font-mono text-sm stat-value">(2.5, 2.5)</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="verify-box" class="rounded-lg p-4 border transition-all duration-500">
+              <div id="verify-text" class="text-sm font-medium"></div>
+              <div id="verify-detail" class="text-xs text-lab-muted mt-1 font-mono"></div>
+            </div>
+
+            <div class="mt-4">
+              <div class="text-[10px] uppercase text-lab-muted tracking-wider mb-2">Quick presets</div>
+              <div class="flex flex-wrap gap-2">
+                <button class="preset-btn text-[10px] px-2 py-1 rounded border border-lab-border hover:border-neon-blue/50 transition" data-u="2,0.5" data-w="0.5,2">Independent</button>
+                <button class="preset-btn text-[10px] px-2 py-1 rounded border border-lab-border hover:border-neon-blue/50 transition" data-u="1,1" data-w="2,2">Parallel</button>
+                <button class="preset-btn text-[10px] px-2 py-1 rounded border border-lab-border hover:border-neon-blue/50 transition" data-u="3,0" data-w="0,3">Orthogonal</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-lab-border bg-lab-card/80 backdrop-blur p-5">
+            <h3 class="text-sm font-semibold mb-2"><i class="fa-solid fa-lightbulb mr-2 text-yellow-400"></i>Key Insight</h3>
+            <p id="insight-text" class="text-xs text-lab-muted leading-relaxed"></p>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-lab-border bg-lab-card/80 backdrop-blur p-4 card-glow">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold"><i class="fa-solid fa-draw-polygon mr-2 text-neon-purple"></i>Interactive Plane</h3>
+            <span class="text-[10px] text-lab-muted font-mono">drag ● handles</span>
+          </div>
+          <canvas id="subspace-canvas" class="lab-canvas cursor-crosshair" height="520"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <footer class="mt-10 text-center text-[10px] text-lab-muted font-mono pb-6">
+      spanlab · linear algebra essence & form · interactive simulation lab
+    </footer>
+  </div>
+
+  <!-- Load order matters: utils → sims → app bootstrap -->
+  <script src="js/math.js"></script>
+  <script src="js/canvas-draw.js"></script>
+  <script src="js/pivot-sim.js"></script>
+  <script src="js/subspace-sim.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
